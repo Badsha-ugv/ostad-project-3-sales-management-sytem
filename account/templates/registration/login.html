@@ -1,0 +1,22 @@
+{% extends 'base.html ' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-6 mx-auto">
+            <h2>Login page</h2>
+            <div class="card p-3">
+                <form method="POST" action="{% url 'account:login' %}">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary btn-sm w-100">Login</button>
+                </form>
+                <a href="">Forgot password?</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
