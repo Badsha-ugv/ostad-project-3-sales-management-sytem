@@ -88,3 +88,5 @@ def register_view(request):
             return render(request, 'registration/register.html', {'form': form})
         
     return render(request, 'registration/register.html',{'form': form})
+
+
