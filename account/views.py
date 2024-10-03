@@ -8,11 +8,14 @@ from django.core.mail import send_mail
 
 
 from .models import UserProfile, LoginOTP
-from .forms import LoginForm 
+from .forms import LoginForm , RegisterForm
 
 
 def login_view(request):
     form = LoginForm()
+    if request.user.is_authenticated:
+        return redirect('index:home')
+    
     if request.method == 'POST':
         form = LoginForm(data=request.POST)
         if form.is_valid():
@@ -41,7 +44,7 @@ def login_view(request):
     return render(request, 'registration/login.html', {'form': form})
 
 
-def opt_view(request):
+def otp_view(request):
     if request.method == 'POST':
         otp = request.POST.get('otp')
         username = request.session['otp_user']
@@ -60,3 +63,28 @@ def opt_view(request):
         else:
             return render(request, 'registration/otp_view.html', {'error': 'Invalid OTP'})
     return render(request, 'registration/otp_view.html')
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('account:login')
+
+
+def register_view(request):
+    form = RegisterForm()
+    if request.user.is_authenticated:
+        return redirect('index:home')
+    
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_active = True # future changes for email confirmation
+            user.save()
+            profile = UserProfile.objects.create(user=user)
+
+            return redirect('account:login')
+        else:
+            return render(request, 'registration/register.html', {'form': form})
+        
+    return render(request, 'registration/register.html',{'form': form})
